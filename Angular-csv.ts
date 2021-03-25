@@ -184,11 +184,6 @@ export class AngularCsv {
             return data ? 'TRUE' : 'FALSE';
         }
 
-        //by default now if the user did not set nulltostring it will provide the conversion
-        if(!data){
-            return data = '';
-        }
-
         return data;
     }
 
