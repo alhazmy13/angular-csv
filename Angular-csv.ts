@@ -91,11 +91,11 @@ export class AngularCsv {
             return;
         }
 
-        if(this._options.noDownload) {
+        if (this._options.noDownload) {
             return this.csv;
         }
 
-        let blob = new Blob([this.csv], {"type": "text/csv;charset=utf8;"});
+        let blob = new Blob([this.csv], { "type": "text/csv;charset=utf8;" });
 
         if (navigator.msSaveBlob) {
             let filename = this._options.filename.replace(/ /g, "_") + ".csv";
@@ -120,14 +120,14 @@ export class AngularCsv {
      * Create Headers
      */
     getHeaders(): void {
-      if (this._options.headers.length > 0) {
-          const { headers } = this._options;
-          let row = headers.reduce((headerRow, header) => {
-              return headerRow + header + this._options.fieldSeparator;
-          }, '');
-          row = row.slice(0, -1);
-          this.csv += row + CsvConfigConsts.EOL;
-      }
+        if (this._options.headers.length > 0) {
+            const { headers } = this._options;
+            let row = headers.reduce((headerRow, header) => {
+                return headerRow + header + this._options.fieldSeparator;
+            }, '');
+            row = row.slice(0, -1);
+            this.csv += row + CsvConfigConsts.EOL;
+        }
     }
 
     /**
@@ -137,13 +137,13 @@ export class AngularCsv {
         for (let i = 0; i < this.data.length; i++) {
             let row = "";
             if (this._options.useHeader && this._options.headers.length > 0) {
-               for (const index of this._options.headers) {
-                   row += this.formatData(this.data[i][index]) + this._options.fieldSeparator;
-               }
+                for (const index of this._options.headers) {
+                    row += this.formatData(this.data[i][index]) + this._options.fieldSeparator;
+                }
             } else {
-               for (const index in this.data[i]) {
-                   row += this.formatData(this.data[i][index]) + this._options.fieldSeparator;
-               }
+                for (const index in this.data[i]) {
+                    row += this.formatData(this.data[i][index]) + this._options.fieldSeparator;
+                }
             }
             row = row.slice(0, -1);
             this.csv += row + CsvConfigConsts.EOL;
@@ -173,15 +173,22 @@ export class AngularCsv {
         }
 
         if (this._options.nullToEmptyString) {
-            if(data === null) {
+            if (data === null) {
                 return data = '';
+            }else {
+                return data;
             }
-            return data;
         }
-        
+
         if (typeof data === 'boolean') {
             return data ? 'TRUE' : 'FALSE';
         }
+
+
+        if( !data ){
+            return data = '';
+        }
+        
         return data;
     }
 
