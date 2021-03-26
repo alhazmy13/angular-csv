@@ -173,15 +173,17 @@ export class AngularCsv {
         }
 
         if (this._options.nullToEmptyString) {
-            if(data === null) {
+            if(!data) {
                 return data = '';
+            }else{
+                return data;
             }
-            return data;
         }
         
         if (typeof data === 'boolean') {
             return data ? 'TRUE' : 'FALSE';
         }
+
         return data;
     }
 
