@@ -8,7 +8,9 @@ export interface Options {
     title: string;
     useBom: boolean;
     headers: string[];
+    objHeader: any;
     noDownload: boolean;
+    useObjHeader: boolean;
     useHeader: boolean;
     nullToEmptyString: boolean;
 }
@@ -27,6 +29,8 @@ export class CsvConfigConsts {
     public static DEFAULT_SHOW_LABELS = false;
     public static DEFAULT_USE_BOM = true;
     public static DEFAULT_HEADER: any[] = [];
+    public static DEFAULT_OBJ_HEADER = {};
+    public static DEFAULT_USE_OBJ_HEADER = false;
     public static DEFAULT_USE_HEADER = false;
     public static DEFAULT_NO_DOWNLOAD = false;
     public static DEFAULT_NULL_TO_EMPTY_STRING = false;
@@ -43,6 +47,8 @@ export const ConfigDefaults: Options = {
     title: CsvConfigConsts.DEFAULT_TITLE,
     useBom: CsvConfigConsts.DEFAULT_USE_BOM,
     headers: CsvConfigConsts.DEFAULT_HEADER,
+    objHeader: CsvConfigConsts.DEFAULT_OBJ_HEADER,
+    useObjHeader: CsvConfigConsts.DEFAULT_USE_OBJ_HEADER,
     useHeader: CsvConfigConsts.DEFAULT_USE_HEADER,
     noDownload: CsvConfigConsts.DEFAULT_NO_DOWNLOAD,
     nullToEmptyString: CsvConfigConsts.DEFAULT_NULL_TO_EMPTY_STRING
@@ -83,9 +89,15 @@ export class AngularCsv {
             this.csv += this._options.title + '\r\n\n';
         }
 
-        this.getHeaders();
-        this.getBody();
-
+        if (this._options.useObjHeader && Object.keys(this._options.objHeader).length > 0) {
+            this.getHeaderFromObj();
+            this.getBodyAccordingHeader();
+        }
+        else {
+            this.getHeaders();
+            this.getBody();
+        }
+        
         if (this.csv == '') {
             console.log("Invalid data");
             return;
@@ -128,6 +140,36 @@ export class AngularCsv {
           row = row.slice(0, -1);
           this.csv += row + CsvConfigConsts.EOL;
       }
+    }
+
+    /**
+     * Create Header from Object
+     */
+    getHeaderFromObj(): void {
+        if (Object.keys(this._options.objHeader).length > 0) {
+            let row = '';
+            Object.keys(this._options.objHeader).forEach(key => {
+                row += this._options.objHeader[key] + this._options.fieldSeparator;
+            })
+            row = row.slice(0, -1);
+            this.csv += row + CsvConfigConsts.EOL;
+        }
+    }
+
+    /**
+     * Create Body according to obj header
+     */
+    getBodyAccordingHeader(): void {
+        for (let i = 0; i < this.data.length; i++) {
+            let row = "";
+            if (this._options.useObjHeader && Object.keys(this._options.objHeader).length > 0) {
+                Object.keys(this._options.objHeader).forEach(key => {
+                    row += this.formatData(this.data[i][key]) + this._options.fieldSeparator;
+                })
+            }
+            row = row.slice(0, -1);
+            this.csv += row + CsvConfigConsts.EOL;
+        }
     }
 
     /**
